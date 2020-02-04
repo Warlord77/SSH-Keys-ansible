@@ -1,0 +1,28 @@
+---
+- hosts: all
+  become: yes
+  remote_user: "{{ r_user }}"
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Create a authorized_keys file if it does not exist
+      file:
+        path: /home/awakening/.ssh/authorized_keys
+        owner: "{{ changesuser  }}"
+        group: "{{ changesgroup }}"
+        mode: '0600'
+
+    - name: Set authorized key taken from file
+      authorized_key:
+        user: "{{ changesuser }}"
+        state: present
+        key: "{{ lookup('file','/home/w77/Documents/Ansible/sshkeys/keys') }}"
+
+    - name: Remove authorized key taken from file
+      authorized_key:
+        user: awakening
+        state: absent
+        key: "{{ lookup('file','/home/w77/Documents/Ansible/sshkeys/removekeys') }}"  
+    
